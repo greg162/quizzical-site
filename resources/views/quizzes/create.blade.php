@@ -19,7 +19,7 @@
                         <div v-show="errors" class="alert alert-warning show-nl" role="alert">@{{errors}}</div>
                         <input class="form-control form-control-lg m-2" v-model="title" type="text" placeholder="Your Quiz Name">
                         <textarea class="form-control form-control-lg m-2" v-model="description" placeholder="Short Description (if you want)" id="exampleFormControlTextarea1" rows="3"></textarea>
-                        
+                        <input class="form-control form-control-lg m-2" v-model="password" type="text" placeholder="Quiz Master Password">
                         <question-component v-for="(question, index) in questions" v-bind:index="index" v-bind:question="question"></question-component>
                         <button class="btn btn-success" v-on:click="addQuestion();" >Add a Question</button>
                         <br><br>

@@ -50193,8 +50193,10 @@ var app = new Vue({
         errors += "You must enter a quiz name\r\n";
       }
 
-      if (!this.password) {
-        errors += "You must enter a quiz password\r\n";
+      if (this.id && this.updatePassword || !this.id) {
+        if (!this.password) {
+          errors += "You must enter a quiz password\r\n";
+        }
       }
 
       this.questions.forEach(function (question, key) {
@@ -50246,12 +50248,17 @@ var app = new Vue({
       this.validateQuestions();
 
       if (!this.errors) {
-        axios.post('/quiz/update/' + quizId, {
+        var updateObject = {
           title: this.title,
-          password: this.password,
           description: this.description,
           questions: this.questions
-        }).then(function (response) {
+        };
+
+        if (this.password) {
+          updateObject.password = this.password;
+        }
+
+        axios.post('/quiz/update/' + quizId, updateObject).then(function (response) {
           if (response.data.errors) {
             this.errors = response.data.errors;
           }
@@ -50438,8 +50445,8 @@ exports.uuidv4 = function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\greg\projects\quizzical.live\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Users\greg\projects\quizzical.live\resources\sass\main.scss */"./resources/sass/main.scss");
+__webpack_require__(/*! C:\Users\greg\projects\quizzical.space\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\greg\projects\quizzical.space\resources\sass\main.scss */"./resources/sass/main.scss");
 
 
 /***/ })

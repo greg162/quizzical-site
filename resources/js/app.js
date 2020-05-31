@@ -69,7 +69,9 @@ const app = new Vue({
         validateQuestions: function() {
             let errors = "";
             if(!this.title)    { errors += "You must enter a quiz name\r\n"; }
-            if(!this.password) { errors += "You must enter a quiz password\r\n"; }
+            if( (this.id && this.updatePassword) || !this.id) {
+                if(!this.password) { errors += "You must enter a quiz password\r\n"; }
+            }
             this.questions.forEach( (question, key) => {
                 questionNum = key + 1;
                 if(!question.question)     { errors  += `You must enter a question for ${questionNum}. \n`; }
@@ -111,12 +113,15 @@ const app = new Vue({
         updateQuiz: function (){
             this.validateQuestions();
             if(!this.errors) {
-              axios.post('/quiz/update/'+quizId, {
+              var updateObject = {
                 title: this.title,
-                password: this.password,
                 description: this.description,
-                  questions: this.questions,
-              })
+                questions: this.questions,
+              }
+              if(this.password) {
+                  updateObject.password = this.password;
+              }
+              axios.post('/quiz/update/'+quizId, updateObject)
               .then(function (response) {
                   if(response.data.errors) {
                       this.errors = response.data.errors;
