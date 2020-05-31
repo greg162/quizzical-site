@@ -238,8 +238,9 @@ class QuizController extends Controller
         if(!$quiz) { abort(404); }
 
         //Connect to Mongo
-        $client          = new \MongoDB\Client('mongodb://localhost:27017');
-        $gamesDatabase   = $client->db->games;
+        $mongoConnectionString = env('MONGO_CONNECTION');
+        $client                = new \MongoDB\Client($mongoConnectionString);
+        $gamesDatabase         = $client->db->games;
 
 
 
