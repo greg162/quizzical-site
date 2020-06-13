@@ -11,7 +11,12 @@ const mix = require('laravel-mix');
  |
  */
 
+
 mix.setPublicPath('public_html')
 .js(['resources/js/app.js'], 'js/app.js')
-mix.copy('resources/img', 'img')
-.sass('resources/sass/main.scss', 'css/app.css');
+.copy('resources/home/bootstrap.min.css', 'public_html/css/home-bootstrap.css')
+.copyDirectory('resources/img', 'public_html/img')
+.sass('resources/sass/main.scss', 'css/app.css')
+.copyDirectory('resources/home', 'public_html/home');
+
+

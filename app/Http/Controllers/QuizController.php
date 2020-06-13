@@ -92,7 +92,7 @@ class QuizController extends Controller
                     $question->user_id = $user->id;
                     $question->save();
                 }
-                return ['success' => "Questionnaire successfully created!\n", 'errors' => '' ];
+                return ['success' => "Quiz successfully created!\n", 'errors' => '' ];
             } else {
                 return response()->json(['errors' => 'You must add at least one question.' ],202);
             }
@@ -215,7 +215,7 @@ class QuizController extends Controller
                 //Remove questions that no longer exist.
                 Question::where('quiz_id', $quiz->id)->whereNotIn('id', $ids)->delete();
 
-                return ['success' => "Questionnaire successfully updated!\n", 'errors' => '' ];
+                return ['success' => "Quiz successfully updated!\n", 'errors' => '' ];
             } else {
                 return response()->json(['errors' => 'You must add at least one question.' ],202);
             }

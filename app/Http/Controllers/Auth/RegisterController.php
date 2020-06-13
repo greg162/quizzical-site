@@ -8,6 +8,8 @@ use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -55,6 +57,29 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
+
+    public function register(Request $request) {
+        $validator = $this->validator($request->all());
+
+        if($validator->fails()) {
+            return redirect()->route('register')->withErrors($validator)->withInput();
+        }
+    
+        $user = $this->create($request->all());
+    
+        if(empty($user)) { // Failed to register user
+            redirect()->route('register'); // Wherever you want to redirect
+        }
+    
+        event(new Registered($user));
+    
+        $this->guard()->login($user);
+    
+        // Success redirection - which will be attribute `$redirectTo`
+        return redirect()->route('start');
+
+    }
+
 
     /**
      * Create a new user instance after a valid registration.

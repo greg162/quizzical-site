@@ -14,7 +14,8 @@
                         </div>
                     @endif
 
-                    You are logged in!
+                    <p>Welcome to Quizzlcal! You can view your quizzes here:</p>
+                    <a class="btn btn-primary btn-lg btn-block" href="{{ route('quiz.list') }}" >Build Me Some Quizzes</a>
                 </div>
             </div>
         </div>

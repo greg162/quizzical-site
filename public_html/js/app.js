@@ -1950,6 +1950,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log('Question created');
@@ -37608,351 +37618,366 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "question" }, [
-    _c(
-      "select",
-      {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.question.questionType,
-            expression: "question.questionType"
-          }
-        ],
-        on: {
-          change: function($event) {
-            var $$selectedVal = Array.prototype.filter
-              .call($event.target.options, function(o) {
-                return o.selected
-              })
-              .map(function(o) {
-                var val = "_value" in o ? o._value : o.value
-                return val
-              })
-            _vm.$set(
-              _vm.question,
-              "questionType",
-              $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+  return _c("div", { staticClass: "card mt-3" }, [
+    _c("div", { staticClass: "card-body" }, [
+      _c("div", { staticClass: "question" }, [
+        _c("div", { staticClass: "input-group m-2" }, [
+          _c(
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.question.questionType,
+                  expression: "question.questionType"
+                }
+              ],
+              staticClass: "form-control",
+              on: {
+                change: function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.$set(
+                    _vm.question,
+                    "questionType",
+                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                  )
+                }
+              }
+            },
+            [
+              _c("option", { attrs: { value: "" } }, [_vm._v("Question Type")]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "multiple-choice" } }, [
+                _vm._v("Mulitple Choice")
+              ]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "text" } }, [_vm._v("One Answer")])
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "input-group-append" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-warning",
+                on: {
+                  click: function($event) {
+                    return _vm.removeThisQuestion(_vm.index)
+                  }
+                }
+              },
+              [_c("i", { staticClass: "far fa-window-close" })]
             )
-          }
-        }
-      },
-      [
-        _c("option", { attrs: { value: "multiple-choice" } }, [
-          _vm._v("Mulitple Choice")
+          ])
         ]),
         _vm._v(" "),
-        _c("option", { attrs: { value: "text" } }, [_vm._v("One Answer")])
-      ]
-    ),
-    _vm._v(" "),
-    _c("i", {
-      staticClass: "far fa-window-close",
-      on: {
-        click: function($event) {
-          return _vm.removeThisQuestion(_vm.index)
-        }
-      }
-    }),
-    _vm._v(" "),
-    _c("input", {
-      directives: [
-        {
-          name: "model",
-          rawName: "v-model",
-          value: _vm.question.question,
-          expression: "question.question"
-        }
-      ],
-      staticClass: "form-control form-control-lg m-2",
-      attrs: { type: "text", placeholder: "Question" },
-      domProps: { value: _vm.question.question },
-      on: {
-        input: function($event) {
-          if ($event.target.composing) {
-            return
-          }
-          _vm.$set(_vm.question, "question", $event.target.value)
-        }
-      }
-    }),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.question.questionType == "text",
-            expression: "question.questionType == 'text' "
-          }
-        ]
-      },
-      [
-        _c("textarea", {
+        _c("input", {
           directives: [
             {
               name: "model",
               rawName: "v-model",
-              value: _vm.question.answer_1,
-              expression: "question.answer_1"
+              value: _vm.question.question,
+              expression: "question.question"
             }
           ],
-          staticClass: "form-control form-control-lg m-2",
-          attrs: {
-            type: "text",
-            placeholder:
-              "Answer (leave blank if you want to find your own answer)"
-          },
-          domProps: { value: _vm.question.answer_1 },
+          staticClass: "form-control m-2",
+          attrs: { type: "text", placeholder: "Question" },
+          domProps: { value: _vm.question.question },
           on: {
             input: function($event) {
               if ($event.target.composing) {
                 return
               }
-              _vm.$set(_vm.question, "answer_1", $event.target.value)
+              _vm.$set(_vm.question, "question", $event.target.value)
             }
           }
-        })
-      ]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        directives: [
+        }),
+        _vm._v(" "),
+        _c(
+          "div",
           {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.question.questionType == "multiple-choice",
-            expression: "question.questionType == 'multiple-choice' "
-          }
-        ]
-      },
-      [
-        _c("div", { staticClass: "input-group mb-3" }, [
-          _c("div", { staticClass: "input-group-prepend" }, [
-            _c(
-              "span",
-              {
-                staticClass: "input-group-text",
-                attrs: { id: "basic-addon1" }
-              },
-              [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.question.correct_answer,
-                      expression: "question.correct_answer"
-                    }
-                  ],
-                  attrs: { value: "1", type: "radio" },
-                  domProps: {
-                    checked: _vm._q(_vm.question.correct_answer, "1")
-                  },
-                  on: {
-                    change: function($event) {
-                      return _vm.$set(_vm.question, "correct_answer", "1")
-                    }
-                  }
-                })
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("input", {
             directives: [
               {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.question.answer_1,
-                expression: "question.answer_1"
+                name: "show",
+                rawName: "v-show",
+                value: _vm.question.questionType == "text",
+                expression: "question.questionType == 'text' "
               }
-            ],
-            staticClass: "form-control form-control-lg ",
-            attrs: { type: "text", placeholder: "Answer 1" },
-            domProps: { value: _vm.question.answer_1 },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
+            ]
+          },
+          [
+            _c("textarea", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.question.answer_1,
+                  expression: "question.answer_1"
                 }
-                _vm.$set(_vm.question, "answer_1", $event.target.value)
+              ],
+              staticClass: "form-control m-2",
+              attrs: {
+                type: "text",
+                placeholder:
+                  "Answer (leave blank if you want to find your own answer)"
+              },
+              domProps: { value: _vm.question.answer_1 },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.question, "answer_1", $event.target.value)
+                }
               }
-            }
-          })
-        ]),
+            })
+          ]
+        ),
         _vm._v(" "),
-        _c("div", { staticClass: "input-group mb-3" }, [
-          _c("div", { staticClass: "input-group-prepend" }, [
-            _c(
-              "span",
-              {
-                staticClass: "input-group-text",
-                attrs: { id: "basic-addon1" }
-              },
-              [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.question.correct_answer,
-                      expression: "question.correct_answer"
-                    }
-                  ],
-                  attrs: { value: "2", type: "radio" },
-                  domProps: {
-                    checked: _vm._q(_vm.question.correct_answer, "2")
-                  },
-                  on: {
-                    change: function($event) {
-                      return _vm.$set(_vm.question, "correct_answer", "2")
-                    }
-                  }
-                })
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("input", {
+        _c(
+          "div",
+          {
             directives: [
               {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.question.answer_2,
-                expression: "question.answer_2"
+                name: "show",
+                rawName: "v-show",
+                value: _vm.question.questionType == "multiple-choice",
+                expression: "question.questionType == 'multiple-choice' "
               }
-            ],
-            staticClass: "form-control form-control-lg ",
-            attrs: { type: "text", placeholder: "Answer 1" },
-            domProps: { value: _vm.question.answer_2 },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.question, "answer_2", $event.target.value)
-              }
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "input-group mb-3" }, [
-          _c("div", { staticClass: "input-group-prepend" }, [
-            _c(
-              "span",
-              {
-                staticClass: "input-group-text",
-                attrs: { id: "basic-addon1" }
-              },
-              [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.question.correct_answer,
-                      expression: "question.correct_answer"
-                    }
-                  ],
-                  attrs: { value: "3", type: "radio" },
-                  domProps: {
-                    checked: _vm._q(_vm.question.correct_answer, "3")
+            ]
+          },
+          [
+            _c("div", { staticClass: "input-group m-2" }, [
+              _c("div", { staticClass: "input-group-prepend" }, [
+                _c(
+                  "span",
+                  {
+                    staticClass: "input-group-text",
+                    attrs: { id: "basic-addon1" }
                   },
-                  on: {
-                    change: function($event) {
-                      return _vm.$set(_vm.question, "correct_answer", "3")
-                    }
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.question.correct_answer,
+                          expression: "question.correct_answer"
+                        }
+                      ],
+                      attrs: { value: "1", type: "radio" },
+                      domProps: {
+                        checked: _vm._q(_vm.question.correct_answer, "1")
+                      },
+                      on: {
+                        change: function($event) {
+                          return _vm.$set(_vm.question, "correct_answer", "1")
+                        }
+                      }
+                    })
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.question.answer_1,
+                    expression: "question.answer_1"
                   }
-                })
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.question.answer_3,
-                expression: "question.answer_3"
-              }
-            ],
-            staticClass: "form-control form-control-lg ",
-            attrs: { type: "text", placeholder: "Answer 1" },
-            domProps: { value: _vm.question.answer_3 },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.question, "answer_3", $event.target.value)
-              }
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "input-group mb-3" }, [
-          _c("div", { staticClass: "input-group-prepend" }, [
-            _c(
-              "span",
-              {
-                staticClass: "input-group-text",
-                attrs: { id: "basic-addon1" }
-              },
-              [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.question.correct_answer,
-                      expression: "question.correct_answer"
+                ],
+                staticClass: "form-control ",
+                attrs: { type: "text", placeholder: "Answer 1" },
+                domProps: { value: _vm.question.answer_1 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
                     }
-                  ],
-                  attrs: { value: "4", type: "radio" },
-                  domProps: {
-                    checked: _vm._q(_vm.question.correct_answer, "4")
+                    _vm.$set(_vm.question, "answer_1", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "input-group m-2" }, [
+              _c("div", { staticClass: "input-group-prepend" }, [
+                _c(
+                  "span",
+                  {
+                    staticClass: "input-group-text",
+                    attrs: { id: "basic-addon1" }
                   },
-                  on: {
-                    change: function($event) {
-                      return _vm.$set(_vm.question, "correct_answer", "4")
-                    }
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.question.correct_answer,
+                          expression: "question.correct_answer"
+                        }
+                      ],
+                      attrs: { value: "2", type: "radio" },
+                      domProps: {
+                        checked: _vm._q(_vm.question.correct_answer, "2")
+                      },
+                      on: {
+                        change: function($event) {
+                          return _vm.$set(_vm.question, "correct_answer", "2")
+                        }
+                      }
+                    })
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.question.answer_2,
+                    expression: "question.answer_2"
                   }
-                })
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.question.answer_4,
-                expression: "question.answer_4"
-              }
-            ],
-            staticClass: "form-control form-control-lg ",
-            attrs: { type: "text", placeholder: "Answer 1" },
-            domProps: { value: _vm.question.answer_4 },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
+                ],
+                staticClass: "form-control ",
+                attrs: { type: "text", placeholder: "Answer 2" },
+                domProps: { value: _vm.question.answer_2 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.question, "answer_2", $event.target.value)
+                  }
                 }
-                _vm.$set(_vm.question, "answer_4", $event.target.value)
-              }
-            }
-          })
-        ])
-      ]
-    )
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "input-group m-2" }, [
+              _c("div", { staticClass: "input-group-prepend" }, [
+                _c(
+                  "span",
+                  {
+                    staticClass: "input-group-text",
+                    attrs: { id: "basic-addon1" }
+                  },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.question.correct_answer,
+                          expression: "question.correct_answer"
+                        }
+                      ],
+                      attrs: { value: "3", type: "radio" },
+                      domProps: {
+                        checked: _vm._q(_vm.question.correct_answer, "3")
+                      },
+                      on: {
+                        change: function($event) {
+                          return _vm.$set(_vm.question, "correct_answer", "3")
+                        }
+                      }
+                    })
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.question.answer_3,
+                    expression: "question.answer_3"
+                  }
+                ],
+                staticClass: "form-control ",
+                attrs: { type: "text", placeholder: "Answer 3" },
+                domProps: { value: _vm.question.answer_3 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.question, "answer_3", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "input-group m-2" }, [
+              _c("div", { staticClass: "input-group-prepend" }, [
+                _c(
+                  "span",
+                  {
+                    staticClass: "input-group-text",
+                    attrs: { id: "basic-addon1" }
+                  },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.question.correct_answer,
+                          expression: "question.correct_answer"
+                        }
+                      ],
+                      attrs: { value: "4", type: "radio" },
+                      domProps: {
+                        checked: _vm._q(_vm.question.correct_answer, "4")
+                      },
+                      on: {
+                        change: function($event) {
+                          return _vm.$set(_vm.question, "correct_answer", "4")
+                        }
+                      }
+                    })
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.question.answer_4,
+                    expression: "question.answer_4"
+                  }
+                ],
+                staticClass: "form-control ",
+                attrs: { type: "text", placeholder: "Answer 4" },
+                domProps: { value: _vm.question.answer_4 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.question, "answer_4", $event.target.value)
+                  }
+                }
+              })
+            ])
+          ]
+        )
+      ])
+    ])
   ])
 }
 var staticRenderFns = []
