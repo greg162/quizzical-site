@@ -6,9 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Quiz;
 use App\Question;
+use App\Game;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-
 
 class QuizController extends Controller
 {
@@ -21,8 +20,17 @@ class QuizController extends Controller
     {
         //
         $user        = Auth::user();
-        $userQuizzes = Quiz::where('user_id', $user->id)->paginate(10);
-        return view('quizzes.list', ['userQuizzes' => $userQuizzes]);
+        $quizzes     = Quiz::where('user_id', $user->id)->paginate(10);
+        $quizIds     = $quizzes->pluck('id');
+        $mongoFilter = [];
+        foreach($quizIds as $quizId) {
+            $mongoFilter['$or'][] = ['quiz_id' => $quizId];
+        }
+        $mongoFilter['game_start_time'] = null;
+
+        $games = Game::list($mongoFilter);
+
+        return view('quizzes.list', ['quizzes' => $quizzes, 'games' => $games]);
     }
 
     /**
@@ -238,40 +246,10 @@ class QuizController extends Controller
         if(!$quiz) { abort(404); }
 
         //Connect to Mongo
-        $mongoConnectionString = env('MONGO_CONNECTION');
-        $client                = new \MongoDB\Client($mongoConnectionString);
-        $gamesDatabase         = $client->db->games;
-
-
-
-        $insertData = [
-            'uuid'            => Str::uuid(),
-            'game_id'         => Str::random(10),
-            'id'              => $quiz->id,
-            'name'            => $quiz->name,
-            'description'     => $quiz->description,
-            'password'        => $quiz->password,
-            'game_started'    => 0,
-            'game_completed'  => 0,
-            'game_start_time' => null,
-            'questions'       => [],
-        ];
-        $questions  = Question::where('quiz_id', $quiz->id)->get();
-        foreach($questions as $question) {
-            $insertData['questions'][] = $question->toArray();
-        }
-
-        $game = $gamesDatabase->findOne(['id' => $quiz->id, 'game_started' => 0 ]);
-        if($game) {
-            $gamesDatabase->updateOne(['id' => $quiz->id], ['$set' => $insertData]);
-        } else {
-            $game = $gamesDatabase->insertOne($insertData);
-        }
-
+        Game::create($user, $quiz);
 
         return redirect()->route('quiz.list');
     }
-
 
 
     /**
