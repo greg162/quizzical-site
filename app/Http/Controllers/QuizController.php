@@ -85,7 +85,9 @@ class QuizController extends Controller
                 $quiz->description = $request->description ?? '';
                 $quiz->user_id     = $user->id;
                 $quiz->save();
+
                 foreach($request->questions as $key => $requestQuestion) {
+
                     $question = new Question;
                     $question->question       = $requestQuestion['question'];
                     $question->answer_1       = $requestQuestion['answer_1'] ?? '';
@@ -98,6 +100,7 @@ class QuizController extends Controller
                     $question->correct_answer = $requestQuestion['correct_answer'] ?? '';
                     $question->quiz_id = $quiz->id;
                     $question->user_id = $user->id;
+                    $question->cleanQuestionData();
                     $question->save();
                 }
                 return ['success' => "Quiz successfully created!\n", 'errors' => '' ];
@@ -216,6 +219,7 @@ class QuizController extends Controller
                         $question->quiz_id = $quiz->id;
                         $question->user_id = $user->id;
                     }
+                    $question->cleanQuestionData();
                     $question->save();
                     $ids[] = $question->id;
                 }

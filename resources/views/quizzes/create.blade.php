@@ -22,7 +22,7 @@
             </div>
             <question-component v-for="(question, index) in questions" v-bind:index="index" v-bind:question="question"></question-component>
             <button class="btn btn-success mt-3" v-on:click="addQuestion();" >Add a Question</button>
-            <button class="btn btn-success mt-3" v-on:click="saveQuiz();" >Save Question</button>
+            <button class="btn btn-success mt-3" v-on:click="saveQuiz();" >Save Quiz</button>
         </div>
     </div>
 </div>

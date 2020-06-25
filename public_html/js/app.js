@@ -1960,6 +1960,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log('Question created');
@@ -37659,7 +37664,13 @@ var render = function() {
                 _vm._v("Mulitple Choice")
               ]),
               _vm._v(" "),
-              _c("option", { attrs: { value: "text" } }, [_vm._v("One Answer")])
+              _c("option", { attrs: { value: "text" } }, [
+                _vm._v("One Answer")
+              ]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "embed" } }, [
+                _vm._v("Embed Something")
+              ])
             ]
           ),
           _vm._v(" "),
@@ -37726,8 +37737,69 @@ var render = function() {
               staticClass: "form-control m-2",
               attrs: {
                 type: "text",
-                placeholder:
-                  "Answer (leave blank if you want to find your own answer)"
+                placeholder: "Answer (leave blank if you want)"
+              },
+              domProps: { value: _vm.question.answer_1 },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.question, "answer_1", $event.target.value)
+                }
+              }
+            })
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.question.questionType == "embed",
+                expression: "question.questionType == 'embed' "
+              }
+            ]
+          },
+          [
+            _c("textarea", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.question.answer_2,
+                  expression: "question.answer_2"
+                }
+              ],
+              staticClass: "form-control m-2",
+              attrs: { type: "text", placeholder: "Your Embed Code" },
+              domProps: { value: _vm.question.answer_2 },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.question, "answer_2", $event.target.value)
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("textarea", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.question.answer_1,
+                  expression: "question.answer_1"
+                }
+              ],
+              staticClass: "form-control m-2",
+              attrs: {
+                type: "text",
+                placeholder: "Answer (leave blank if you want)"
               },
               domProps: { value: _vm.question.answer_1 },
               on: {
@@ -50470,8 +50542,8 @@ exports.uuidv4 = function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\greg\projects\quizzical.space\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Users\greg\projects\quizzical.space\resources\sass\main.scss */"./resources/sass/main.scss");
+__webpack_require__(/*! C:\Users\greg\projects\www.quizzical.space\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\greg\projects\www.quizzical.space\resources\sass\main.scss */"./resources/sass/main.scss");
 
 
 /***/ })

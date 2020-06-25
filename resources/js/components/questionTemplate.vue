@@ -7,6 +7,7 @@
                         <option value="" >Question Type</option>
                         <option value="multiple-choice" >Mulitple Choice</option>
                         <option value="text" >One Answer</option>
+                        <option value="embed" >Embed Something</option>
                     </select>
                     <div class="input-group-append">
                         <button v-on:click="removeThisQuestion(index);" class="btn btn-warning" >
@@ -17,7 +18,11 @@
                 <input class="form-control m-2" v-model="question.question" type="text" placeholder="Question">
 
                 <div v-show="question.questionType == 'text' ">
-                    <textarea class="form-control m-2" v-model="question.answer_1" type="text" placeholder="Answer (leave blank if you want to find your own answer)"></textarea>
+                    <textarea class="form-control m-2" v-model="question.answer_1" type="text" placeholder="Answer (leave blank if you want)"></textarea>
+                </div>
+                <div v-show="question.questionType == 'embed' ">
+                    <textarea class="form-control m-2" v-model="question.answer_2" type="text" placeholder="Your Embed Code"></textarea>
+                    <textarea class="form-control m-2" v-model="question.answer_1" type="text" placeholder="Answer (leave blank if you want)"></textarea>
                 </div>
                 <div v-show="question.questionType == 'multiple-choice' ">
                     <div class="input-group m-2">
