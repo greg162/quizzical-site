@@ -17,7 +17,7 @@ class Game {
         return $games;
     }
 
-    static function list( array $searchArray, int $limit = 10) {
+    static function list( array $searchArray, int $limit = 100) {
         $mongo = new Mongo('db', 'games');
         $games = $mongo->connection->find($searchArray, [ 'limit' => $limit ]);
         $games = iterator_to_array($games);
