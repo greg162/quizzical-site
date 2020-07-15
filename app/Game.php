@@ -12,7 +12,7 @@ class Game {
 
     static function addGameUrlsToGames($games) {
         foreach($games as $game) {
-            $game->url = config('app.game_url').'#'.$game->game_id;
+            $game->url = config('app.game_url').'/q/'.$game->game_id."/";
         }
         return $games;
     }

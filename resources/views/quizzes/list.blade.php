@@ -28,7 +28,7 @@
                                             @if ($game->quiz_id === $quiz->id)
                                                 <tr>
                                                     <td>{{ $game->game_id }}<td>
-                                                    <td>{{ $game->url }}<td>
+                                                    <td><a target="_blank" href="{{ $game->url }}">{{ $game->url }}</a><td>
                                                 </tr>
                                             @endif
                                         @endforeach
