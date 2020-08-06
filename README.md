@@ -15,7 +15,6 @@ Custom Laravel .env variables required:
 
  ## Bugs
 
-  * Success box not disappearing after a few seconds. 
   * Quit button removes the GAME ID.
   * Create unit tests to ensure that users disconnecting then rejoining does not crash the server.
 

@@ -11,7 +11,6 @@ class Quiz extends Model
     protected $fillable = ['name', 'description'];
 
 
-
     static function createValidationRules() {
         return [
             'title'       => 'required|max:255',
@@ -21,12 +20,21 @@ class Quiz extends Model
         ];
     }
 
+
     static function updateValidationRules() {
         return [
             'title'       => 'required|max:255',
             'password'    => 'min:6|max:30|regex:/\d/i',
             'description' => 'max:1000',
             'questions'   => 'array|required',
+        ];
+    }
+
+
+    static function uploadValidationRules() {
+        return [
+            'uuid' => 'required|uuid',
+            'file' => 'required|file|image|max:5000',
         ];
     }
 

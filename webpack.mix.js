@@ -14,7 +14,9 @@ const mix = require('laravel-mix');
 
 mix.setPublicPath('public_html')
 .js(['resources/js/app.js'], 'js/app.js')
+.js(['resources/js/quiz.js'], 'js/quiz.js')
 .copy('resources/home/bootstrap.min.css', 'public_html/css/home-bootstrap.css')
+.copy('node_modules/dropzone/dist/dropzone.css', 'public_html/css/dropzone.css')
 .copyDirectory('resources/img', 'public_html/img')
 .sass('resources/sass/main.scss', 'css/app.css')
 .copyDirectory('resources/home', 'public_html/home');

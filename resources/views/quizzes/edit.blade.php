@@ -1,7 +1,8 @@
 @extends('layouts.main-site')
 
 @section('header')
-    <script > const quizId = {{ intval($id) }}</script>
+<script > const quizId = {{ intval($id) }}</script>
+<link href="/css/dropzone.css" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -32,4 +33,9 @@
         </div>
     </div>
 </div>
+@endsection
+
+
+@section('scripts')
+    <script src="/js/quiz.js" ></script>
 @endsection

@@ -27,3 +27,6 @@
     </div>
 </div>
 @endsection
+@section('scripts')
+    <script src="/js/quiz.js" ></script>
+@endsection

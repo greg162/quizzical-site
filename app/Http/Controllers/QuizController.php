@@ -8,6 +8,9 @@ use App\Quiz;
 use App\Question;
 use App\Game;
 use Illuminate\Support\Facades\Validator;
+// import the Intervention Image Manager Class
+use Intervention\Image\ImageManager;
+
 
 class QuizController extends Controller
 {
@@ -272,4 +275,57 @@ class QuizController extends Controller
         session()->flash('success', " successfully deleted!");
         return redirect()->route('quiz.list');
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function upload(Request $request, $id)
+    {
+        $errors = "";
+        //
+
+
+        $user      = Auth::user();
+        if(!$user) { return response()->json(['errors' => 'Quiz not found' ],202); }
+        else {
+            if($id) {
+                $quiz = Quiz::where('id', $id)->where('user_id', $user->id)->first();
+                if(!$quiz) {  return response()->json(['errors' => 'Quiz not found' ],202); }
+            }
+            $validator = Validator::make($request->all(), Quiz::uploadValidationRules() );
+
+            //If validation fails, return the errors
+            if ($validator->fails()) {
+                $errors = $validator->errors();
+                $errorMessage = "";
+                foreach ($errors->all() as $error) { $errorMessage .= $error."\n"; }
+                return response()->json(['errors' => $errorMessage ],202);
+            } elseif ($request->hasFile('file') && $request->file('file')->isValid() ) {
+                //
+                $tempFile = storage_path().'/app/'.$request->file->store('temp_question_images');
+                // create an image manager instance with favored driver
+                $manager = new ImageManager(array('driver' => 'GD'));
+                $image   = $manager->make($tempFile);
+                $w = $image->width();
+                $h = $image->height();
+                if($h > 1000 || $w > 1000) {
+                    if($w > $h) {
+                        $image->resize(1000, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                        });
+                    } else {
+                        $image->resize(null, 1000, function ($constraint) {
+                            $constraint->aspectRatio();
+                        });
+                    }
+                }
+                $image->save();
+            } else { return response()->json(['errors' => 'File not found, or it is corrupted' ],202); }
+        }
+        return response()->json(['success' => 'File Successfully uploaded.' ],200);
+    }
+
 }

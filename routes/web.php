@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/quiz/start/{id}', 'QuizController@start')->name('quiz.start');
     Route::get('/quiz/delete/{id}', 'QuizController@destroy')->name('quiz.delete');
     Route::post('/quiz/api-show/{id}', 'QuizController@show')->name('quiz.api.show');
+    Route::post('/quiz/upload/{id}', 'QuizController@upload')->name('quiz.upload');
 
 
 });
