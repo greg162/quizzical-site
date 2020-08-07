@@ -10,6 +10,7 @@ use App\Game;
 use Illuminate\Support\Facades\Validator;
 // import the Intervention Image Manager Class
 use Intervention\Image\ImageManager;
+use Illuminate\Support\Facades\Storage;
 
 
 class QuizController extends Controller
@@ -277,8 +278,7 @@ class QuizController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
+     * Handles the storage of an image that has been added to a quiz question.
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -305,10 +305,12 @@ class QuizController extends Controller
                 return response()->json(['errors' => $errorMessage ],202);
             } elseif ($request->hasFile('file') && $request->file('file')->isValid() ) {
                 //
-                $tempFile = storage_path().'/app/'.$request->file->store('temp_question_images');
+                $extension    = $request->file->extension();
+                $fileName     = $request->uuid.'.'.$extension;
+                $tempFilePath = storage_path().'/app/'.$request->file->storeAs('temp_question_images', $fileName, 'local');
                 // create an image manager instance with favored driver
                 $manager = new ImageManager(array('driver' => 'GD'));
-                $image   = $manager->make($tempFile);
+                $image   = $manager->make($tempFilePath);
                 $w = $image->width();
                 $h = $image->height();
                 if($h > 1000 || $w > 1000) {
@@ -323,7 +325,44 @@ class QuizController extends Controller
                     }
                 }
                 $image->save();
+                Storage::disk('Wasabi')->put('quiz-images/'.$fileName, fopen($tempFilePath, 'r+'));
+
             } else { return response()->json(['errors' => 'File not found, or it is corrupted' ],202); }
+        }
+        return response()->json(['success' => 'File Successfully uploaded.' ],200);
+    }
+
+        /**
+     * Handles the storage of an image that has been added to a quiz question.
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function removeUpload(Request $request, $id)
+    {
+        $errors = "";
+        //
+        $user      = Auth::user();
+        if(!$user) { return response()->json(['errors' => 'Quiz not found' ],202); }
+        else {
+            if($id) {
+                $quiz = Quiz::where('id', $id)->where('user_id', $user->id)->first();
+                if(!$quiz) {  return response()->json(['errors' => 'Quiz not found' ],202); }
+            }
+            $validator = Validator::make($request->all(), Quiz::removeUploadValidationRules() );
+
+            //If validation fails, return the errors
+            if ($validator->fails()) {
+                $errors = $validator->errors();
+                $errorMessage = "";
+                foreach ($errors->all() as $error) { $errorMessage .= $error."\n"; }
+                return response()->json(['errors' => $errorMessage ],202);
+            } else {
+                //
+                $extension    = $request->file_ext;
+                $fileName     = $request->uuid.'.'.$extension;
+                Storage::disk('Wasabi')->delete('quiz-images/'.$fileName);
+
+            } 
         }
         return response()->json(['success' => 'File Successfully uploaded.' ],200);
     }

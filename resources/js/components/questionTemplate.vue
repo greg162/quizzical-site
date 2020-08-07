@@ -75,6 +75,7 @@
                 this.$parent.removeQuestion(index);
             },
             createDropZone() {
+                var currentFile = null;
                 var myDropzone = new Dropzone('#upload'+this.question.id, {
                     url: "/quiz/upload/"+this.$parent.id,
                     maxFilesize: 5, // MB
@@ -83,6 +84,26 @@
                     parallelUploads: 1,
                     params: {
                         uuid: this.question.id
+                    },
+                    addRemoveLinks: true,
+                    init: function() {
+                        this.on("addedfile", function(file) {
+                        if (currentFile) {
+                            this.removeFile(currentFile);
+                            console.log('here');
+                        }
+                        currentFile = file;
+                        });
+                    },
+                    removedfile: function(file) {
+                        console.log(file);
+                        file.previewElement.remove();
+                        var updateObject = {
+                            uuid: this.question.id,
+                        }
+                        axios.post('/quiz/remove-upload/'+quizId, updateObject)
+                        .then(function (response) {
+                        }.bind(this))
                     }
                 });
             },

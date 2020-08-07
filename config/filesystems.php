@@ -66,12 +66,12 @@ return [
         ],
 
         'Wasabi' => [
-            'driver' => 's3',
-            'key' => env('WAS_ACCESS_KEY_ID'),
-            'secret' => env('WAS_SECRET_ACCESS_KEY'),
-            'region' => env('WAS_DEFAULT_REGION'),
-            'bucket' => env('WAS_BUCKET'),
-            'endpoint' => 'https://s3.wasabisys.com'
+            'driver'   => 's3',
+            'key'      => env('WAS_ACCESS_KEY_ID'),
+            'secret'   => env('WAS_SECRET_ACCESS_KEY'),
+            'region'   => env('WAS_DEFAULT_REGION'),
+            'bucket'   => env('WAS_BUCKET'),
+            'endpoint' => env('WAS_URL')
         ],
 
     ],
