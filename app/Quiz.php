@@ -31,14 +31,6 @@ class Quiz extends Model
     }
 
 
-    static function uploadValidationRules() {
-        return [
-            'uuid' => 'required|uuid',
-            'file' => 'required|file|image|max:5000',
-        ];
-    }
-
-
     static function encryptQuizPassword($password) {
         $options = [
             'cost' => 10,

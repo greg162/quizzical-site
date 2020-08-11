@@ -1,4 +1,4 @@
-const axios = require('axios');
+axios       = require('axios');
 general     = require('./general-library');
 window.Vue  = require('vue');
 Dropzone    = require('dropzone');
@@ -47,7 +47,7 @@ const app = new Vue({
                 answer_3: "",
                 answer_4: "",
                 correct_answer: 1,
-                id: general.uuidv4(),
+                uuid: general.uuidv4(),
             });
         },
         removeQuestion: function(index) {
@@ -132,7 +132,6 @@ const app = new Vue({
                 this.description = response.data.quiz.description;
                 this.id          = response.data.quiz.id;
                 this.questions   = response.data.questions;
-
             }.bind(this))
             .catch(function (error) {
                 console.log(error);

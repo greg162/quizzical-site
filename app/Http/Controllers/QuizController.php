@@ -7,10 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Quiz;
 use App\Question;
 use App\Game;
+use App\Upload;
 use Illuminate\Support\Facades\Validator;
 // import the Intervention Image Manager Class
-use Intervention\Image\ImageManager;
-use Illuminate\Support\Facades\Storage;
 
 
 class QuizController extends Controller
@@ -287,7 +286,6 @@ class QuizController extends Controller
         $errors = "";
         //
 
-
         $user      = Auth::user();
         if(!$user) { return response()->json(['errors' => 'Quiz not found' ],202); }
         else {
@@ -295,7 +293,7 @@ class QuizController extends Controller
                 $quiz = Quiz::where('id', $id)->where('user_id', $user->id)->first();
                 if(!$quiz) {  return response()->json(['errors' => 'Quiz not found' ],202); }
             }
-            $validator = Validator::make($request->all(), Quiz::uploadValidationRules() );
+            $validator = Validator::make($request->all(), Upload::createValidationRules() );
 
             //If validation fails, return the errors
             if ($validator->fails()) {
@@ -304,36 +302,18 @@ class QuizController extends Controller
                 foreach ($errors->all() as $error) { $errorMessage .= $error."\n"; }
                 return response()->json(['errors' => $errorMessage ],202);
             } elseif ($request->hasFile('file') && $request->file('file')->isValid() ) {
-                //
-                $extension    = $request->file->extension();
-                $fileName     = $request->uuid.'.'.$extension;
-                $tempFilePath = storage_path().'/app/'.$request->file->storeAs('temp_question_images', $fileName, 'local');
-                // create an image manager instance with favored driver
-                $manager = new ImageManager(array('driver' => 'GD'));
-                $image   = $manager->make($tempFilePath);
-                $w = $image->width();
-                $h = $image->height();
-                if($h > 1000 || $w > 1000) {
-                    if($w > $h) {
-                        $image->resize(1000, null, function ($constraint) {
-                            $constraint->aspectRatio();
-                        });
-                    } else {
-                        $image->resize(null, 1000, function ($constraint) {
-                            $constraint->aspectRatio();
-                        });
-                    }
-                }
-                $image->save();
-                Storage::disk('Wasabi')->put('quiz-images/'.$fileName, fopen($tempFilePath, 'r+'));
+                $upload = new Upload();
+                $upload->generateFromRequest($request, 'questions', $id, $user);
+                $upload->save();
 
             } else { return response()->json(['errors' => 'File not found, or it is corrupted' ],202); }
         }
         return response()->json(['success' => 'File Successfully uploaded.' ],200);
     }
 
-        /**
-     * Handles the storage of an image that has been added to a quiz question.
+
+    /**
+     * Deletes an image that has been added by a user.
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -341,30 +321,28 @@ class QuizController extends Controller
     {
         $errors = "";
         //
-        $user      = Auth::user();
+        $user = Auth::user();
         if(!$user) { return response()->json(['errors' => 'Quiz not found' ],202); }
-        else {
-            if($id) {
-                $quiz = Quiz::where('id', $id)->where('user_id', $user->id)->first();
-                if(!$quiz) {  return response()->json(['errors' => 'Quiz not found' ],202); }
-            }
-            $validator = Validator::make($request->all(), Quiz::removeUploadValidationRules() );
-
-            //If validation fails, return the errors
-            if ($validator->fails()) {
-                $errors = $validator->errors();
-                $errorMessage = "";
-                foreach ($errors->all() as $error) { $errorMessage .= $error."\n"; }
-                return response()->json(['errors' => $errorMessage ],202);
-            } else {
-                //
-                $extension    = $request->file_ext;
-                $fileName     = $request->uuid.'.'.$extension;
-                Storage::disk('Wasabi')->delete('quiz-images/'.$fileName);
-
-            } 
+        if($id) {
+            $quiz = Quiz::where('id', $id)->where('user_id', $user->id)->first();
+            if(!$quiz) {  return response()->json(['errors' => 'Quiz not found' ],202); }
         }
-        return response()->json(['success' => 'File Successfully uploaded.' ],200);
+        $validator = Validator::make($request->all(), Upload::deleteValidationRules() );
+
+        //If validation fails, return the errors
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            $errorMessage = "";
+            foreach ($errors->all() as $error) { $errorMessage .= $error."\n"; }
+            return response()->json(['errors' => $errorMessage ],202);
+        } else {
+            //
+            $upload = Upload::where('uuid', $request->uuid)->where('user_id', $user->id)->first();
+            if(empty($upload->id)) {  return response()->json(['errors' => 'Upload record not found' ],202); }
+            $upload->deleteFile();
+            $upload->delete();
+        }
+        return response()->json(['success' => 'File Successfully deleted.' ],200);
     }
 
 }

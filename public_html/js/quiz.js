@@ -1985,6 +1985,16 @@ __webpack_require__.r(__webpack_exports__);
     },
     createDropZone: function createDropZone() {
       var currentFile = null;
+      var dropZoneParams = {};
+
+      if (typeof this.question.uuid != 'undefined') {
+        dropZoneParams.uuid = this.question.uuid;
+      }
+
+      if (typeof this.question.id != 'undefined') {
+        dropZoneParams.id = this.question.id;
+      }
+
       var myDropzone = new Dropzone('#upload' + this.question.id, {
         url: "/quiz/upload/" + this.$parent.id,
         maxFilesize: 5,
@@ -1992,9 +2002,7 @@ __webpack_require__.r(__webpack_exports__);
         maxFiles: 1,
         acceptedFiles: 'image/*',
         parallelUploads: 1,
-        params: {
-          uuid: this.question.id
-        },
+        params: dropZoneParams,
         addRemoveLinks: true,
         init: function init() {
           this.on("addedfile", function (file) {
@@ -2007,12 +2015,12 @@ __webpack_require__.r(__webpack_exports__);
           });
         },
         removedfile: function removedfile(file) {
-          console.log(file);
           file.previewElement.remove();
           var updateObject = {
-            uuid: this.question.id
+            uuid: questionUUID
           };
-          axios.post('/quiz/remove-upload/' + quizId, updateObject).then(function (response) {}.bind(this));
+          axios.post('/quiz/remove-upload/' + quizId, updateObject).then(function (response) {});
+          return false;
         }
       });
     },
@@ -18773,8 +18781,7 @@ exports.uuidv4 = function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-
+axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 general = __webpack_require__(/*! ./general-library */ "./resources/js/general-library.js");
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 Dropzone = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
@@ -18818,7 +18825,7 @@ var app = new Vue({
         answer_3: "",
         answer_4: "",
         correct_answer: 1,
-        id: general.uuidv4()
+        uuid: general.uuidv4()
       });
     },
     removeQuestion: function removeQuestion(index) {

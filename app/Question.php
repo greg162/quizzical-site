@@ -31,6 +31,10 @@ class Question extends Model
 
             if(empty($questionData['answer_1']))       { $errors .= "You must enter some embed code for  #$questionNo\n"; }
             if(empty($questionData['correct_answer'])) { $errors .= "You must select a correct answer for question  #$questionNo\n"; }
+        } elseif($questionData['questionType'] === 'upload') {
+
+        } else {
+            $errors .= "We could not find the question type that you uploaded. Please try again later.\n";
         }
 
         return $errors;

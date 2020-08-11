@@ -75,16 +75,22 @@
                 this.$parent.removeQuestion(index);
             },
             createDropZone() {
-                var currentFile = null;
-                var myDropzone = new Dropzone('#upload'+this.question.id, {
+                var currentFile  = null;
+                var dropZoneParams = {}
+                if(typeof this.question.uuid != 'undefined') {
+                    dropZoneParams.uuid = this.question.uuid;
+                }
+                if(typeof this.question.id != 'undefined') {
+                    dropZoneParams.id = this.question.id;
+                }
+ 
+                var myDropzone   = new Dropzone('#upload'+this.question.id, {
                     url: "/quiz/upload/"+this.$parent.id,
                     maxFilesize: 5, // MB
                     maxFiles: 1,
                     acceptedFiles: 'image/*',
                     parallelUploads: 1,
-                    params: {
-                        uuid: this.question.id
-                    },
+                    params: dropZoneParams,
                     addRemoveLinks: true,
                     init: function() {
                         this.on("addedfile", function(file) {
@@ -96,14 +102,14 @@
                         });
                     },
                     removedfile: function(file) {
-                        console.log(file);
                         file.previewElement.remove();
                         var updateObject = {
-                            uuid: this.question.id,
+                            uuid: questionUUID,
                         }
                         axios.post('/quiz/remove-upload/'+quizId, updateObject)
                         .then(function (response) {
-                        }.bind(this))
+                        });
+                        return false;
                     }
                 });
             },
