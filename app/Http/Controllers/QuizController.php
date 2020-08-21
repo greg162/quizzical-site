@@ -105,6 +105,9 @@ class QuizController extends Controller
                     $question->user_id = $user->id;
                     $question->cleanQuestionData();
                     $question->save();
+                    if($requestQuestion['questionType'] === 'upload') {
+                        Upload::assignUploads('questions', $user, $requestQuestion['uuid'], $question->id);
+                    }
                 }
                 return ['success' => "Quiz successfully created!\n", 'errors' => '' ];
             } else {
@@ -125,9 +128,15 @@ class QuizController extends Controller
         $user      = Auth::user();
         $quiz      = Quiz::where('id', $id)->where('user_id', $user->id)->first();
         if(!$quiz) { abort(404); }
-        $questions = Question::where('quiz_id', $quiz->id)->get();
+        $questions   = Question::where('quiz_id', $quiz->id)->get();
+        //Get the linked uploads
+        $questionIds = $permissionIDs = $questions->pluck('id'); 
+        $uploads     = Upload::where('table_name', 'questions')->whereIn('table_id', $questionIds)->get();
         foreach($questions as $question) {
             $question->questionType = $question->type;
+            if($question->questionType == 'upload') {
+                $question->upload = $uploads->firstWhere('table_id', $question->id);
+            }
         }
         return response()->json(['quiz' => $quiz->toArray(), 'questions' => $questions->toArray() ], 200);
 
@@ -225,10 +234,21 @@ class QuizController extends Controller
                     $question->cleanQuestionData();
                     $question->save();
                     $ids[] = $question->id;
+                    if($requestQuestion['questionType'] === 'upload' && !empty($requestQuestion['uuid']) ) {
+                        Upload::assignUploads('questions', $user, $requestQuestion['uuid'], $question->id);
+                    }
                 }
 
                 //Remove questions that no longer exist.
-                Question::where('quiz_id', $quiz->id)->whereNotIn('id', $ids)->delete();
+                $questions = Question::where('quiz_id', $quiz->id)->whereNotIn('id', $ids)->get();
+                foreach($questions as $question) {
+                    if($question->type == 'upload') {
+                        $upload = Upload::where('table_id', $question->id)->first();
+                        $upload->deleteFile();
+                        $upload->delete();
+                    }
+                    $question->delete();
+                }
 
                 return ['success' => "Quiz successfully updated!\n", 'errors' => '' ];
             } else {
@@ -303,10 +323,11 @@ class QuizController extends Controller
                 return response()->json(['errors' => $errorMessage ],202);
             } elseif ($request->hasFile('file') && $request->file('file')->isValid() ) {
                 $upload = new Upload();
-                $upload->generateFromRequest($request, 'questions', $id, $user);
+                $upload->generateFromRequest($request, 'questions', $request->question_id ?? 0, $user);
                 $upload->save();
-
-            } else { return response()->json(['errors' => 'File not found, or it is corrupted' ],202); }
+            } else {
+                return response()->json(['errors' => 'File not found, or it is corrupted' ],202);
+            }
         }
         return response()->json(['success' => 'File Successfully uploaded.' ],200);
     }
@@ -337,7 +358,13 @@ class QuizController extends Controller
             return response()->json(['errors' => $errorMessage ],202);
         } else {
             //
-            $upload = Upload::where('uuid', $request->uuid)->where('user_id', $user->id)->first();
+            if(!empty($request->uuid)) {
+                $upload = Upload::where('user_id', $user->id)->where('uuid', $request->uuid)->first();
+            } elseif(!empty($request->id)) {
+                $upload = Upload::where('user_id', $user->id)->where('table_id', (integer) $request->id)->first();
+            } else {
+                return response()->json(['errors' => 'UUID/ID not found' ],202);
+            }
             if(empty($upload->id)) {  return response()->json(['errors' => 'Upload record not found' ],202); }
             $upload->deleteFile();
             $upload->delete();

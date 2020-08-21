@@ -2,8 +2,8 @@
 
 
 @section('header')
-<script > const quizId = null; </script>
-    <link href="{{ asset('css/rocker-switch.css') }}" rel="stylesheet">
+    <script > const quizId = null; </script>
+    <link href="/css/dropzone.css" rel="stylesheet">
 @endsection
 
 @section('content')

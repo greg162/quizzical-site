@@ -20,21 +20,28 @@ class Question extends Model
         elseif(!in_array($questionData['questionType'], [
             'text',
             'multiple-choice',
-            'embed'
+            'embed',
+            'upload',
         ])) { $errors .= "You have not selected a valid question type for question #$questionNo\n"; }
         elseif($questionData['questionType'] === 'multiple-choice') {
             if(empty($questionData['answer_1']))       { $errors .= "You must something into answer 1 for question  #$questionNo\n"; }
             if(empty($questionData['answer_2']))       { $errors .= "You must something into answer 2 for question  #$questionNo\n"; }
             if(empty($questionData['correct_answer'])) { $errors .= "You must select a correct answer for question  #$questionNo\n"; }
-        }
-        elseif($questionData['questionType'] === 'embed') {
+        }elseif($questionData['questionType'] === 'text') {
 
+        }elseif($questionData['questionType'] === 'embed') {
             if(empty($questionData['answer_1']))       { $errors .= "You must enter some embed code for  #$questionNo\n"; }
             if(empty($questionData['correct_answer'])) { $errors .= "You must select a correct answer for question  #$questionNo\n"; }
         } elseif($questionData['questionType'] === 'upload') {
-
+            if( !empty($questionData['uuid']) && !Upload::where('uuid', $questionData['uuid'])->count() ) {
+                $errors .= "You must upload something for question #$questionNo\n"; 
+            } elseif(!empty($questionData['id']) && !Upload::where('table_id', $questionData['id'])->count()) {
+                $errors .= "You must upload something for question #$questionNo\n"; 
+            } elseif(empty($questionData['id']) && empty($questionData['uuid'])) {
+                $errors .= "No upload ID was found!\n";
+            }
         } else {
-            $errors .= "We could not find the question type that you uploaded. Please try again later.\n";
+            $errors .= "We could not find the question type that you uploaded for question #$questionNo. Please try again later.\n";
         }
 
         return $errors;

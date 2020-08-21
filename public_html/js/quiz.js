@@ -1985,18 +1985,19 @@ __webpack_require__.r(__webpack_exports__);
     },
     createDropZone: function createDropZone() {
       var currentFile = null;
+      var quizId = this.$parent.id;
       var dropZoneParams = {};
 
-      if (typeof this.question.uuid != 'undefined') {
+      if (typeof this.question.uuid != 'undefined' && this.question.uuid) {
         dropZoneParams.uuid = this.question.uuid;
       }
 
-      if (typeof this.question.id != 'undefined') {
-        dropZoneParams.id = this.question.id;
+      if (typeof this.question.id != 'undefined' && this.question.id) {
+        dropZoneParams.question_id = this.question.id;
       }
 
       var myDropzone = new Dropzone('#upload' + this.question.id, {
-        url: "/quiz/upload/" + this.$parent.id,
+        url: "/quiz/upload/" + quizId,
         maxFilesize: 5,
         // MB
         maxFiles: 1,
@@ -2016,13 +2017,34 @@ __webpack_require__.r(__webpack_exports__);
         },
         removedfile: function removedfile(file) {
           file.previewElement.remove();
-          var updateObject = {
-            uuid: questionUUID
-          };
+          var updateObject = {};
+
+          if (dropZoneParams.uuid) {
+            updateObject.uuid = dropZoneParams.uuid;
+          }
+
+          if (dropZoneParams.question_id) {
+            updateObject.id = dropZoneParams.question_id;
+          }
+
           axios.post('/quiz/remove-upload/' + quizId, updateObject).then(function (response) {});
           return false;
         }
       });
+
+      if (this.question.id && this.question.upload) {
+        var mockFile = {
+          name: 'Your Question Image',
+          size: this.question.upload.file_size
+        };
+        var callback = null; // Optional callback when it's done
+
+        var crossOrigin = false; // Added to the `img` tag for crossOrigin handling
+
+        var resizeThumbnail = true; // Tells Dropzone whether it should resize the image first
+
+        myDropzone.displayExistingFile(mockFile, this.question.upload.file_url, callback, crossOrigin, resizeThumbnail);
+      }
     },
     questionTypeChanged: function questionTypeChanged() {
       if (this.question.questionType == 'upload') {

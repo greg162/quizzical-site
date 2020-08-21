@@ -4,6 +4,7 @@ namespace App;
 
 use App\base\Mongo;
 use Illuminate\Support\Str;
+use App\Upload;
 
 
 
@@ -47,8 +48,14 @@ class Game {
 
         ];
         $questions  = Question::where('quiz_id', $quiz->id)->get();
-        foreach($questions as $question) {
-            $insertData['questions'][] = $question->toArray();
+        foreach($questions as $key => $question) {
+            $insertData['questions'][$key] = $question->toArray();
+            if($question->type == 'upload') {
+                $upload = Upload::where('table_id', $question->id)->where('table_name', 'questions')->first(); //This is not very effiecent, I should look into making this a single call later
+                if(!empty($upload->id)) {
+                    $insertData['questions'][$key]['file_url'] = $upload->file_url;
+                }
+            }
         }
 
         $game = $mongo->connection->findOne(['quiz_id' => $quiz->id, 'game_started' => 0 ]);

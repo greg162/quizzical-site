@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Upload extends Model
 {
@@ -28,7 +29,10 @@ class Upload extends Model
 
     function generateFromRequest(Request $request, $tableName, $tableId, $user) {
         $extension    = $request->file->extension();
-        $fileName     = $request->uuid.'.'.$extension;
+        $uuid         = (!empty($request->uuid))? $request->uuid : Str::uuid() ;
+        $fileName     = $uuid.'.'.$extension;
+        $filePath     = 'quiz-images/'.$fileName;
+
         $tempFilePath = storage_path().'/app/'.$request->file->storeAs('temp_question_images', $fileName, 'local');
         // create an image manager instance with favored driver
         $manager = new ImageManager(array('driver' => 'GD'));
@@ -47,21 +51,25 @@ class Upload extends Model
             }
         }
         $image->save();
-        $filePath = 'quiz-images/'.$fileName;
-        Storage::disk('Wasabi')->put($filePath, fopen($tempFilePath, 'r+'));
-        $fileUrl = Storage::disk('Wasabi')->url('quiz-images/'.$fileName);
-        $this->uuid           = $request->uuid;
+        Storage::disk('public')->put($filePath, fopen($tempFilePath, 'r+'));
+        $fileUrl = Storage::disk('public')->url($filePath);
+        $this->uuid           = $uuid;
         $this->user_id        = ($user->id)? $user->id: 0 ;
         $this->file_name      = $fileName;
         $this->file_path      = $filePath;
         $this->file_url       = $fileUrl;
-        $this->storage_engine = 'Wasabi';
+        $this->storage_engine = 'public';
         $this->table_name     = $tableName;
         $this->table_id       = $tableId;
+        $this->file_size      = $image->filesize();
+    }
+
+    static function assignUploads($tableName, $user, $uuid, $tableId) {
+        Upload::where('uuid', $uuid)->where('table_name', $tableName)->where('table_id', 0)->where('user_id', $user->id)->update(['table_id' => $tableId]);
     }
 
     function deleteFile() {
-        Storage::disk('Wasabi')->delete($this->file_path);
+        Storage::disk($this->storage_engine)->delete($this->file_path);
     }
 
 }
