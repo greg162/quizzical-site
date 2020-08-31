@@ -53,7 +53,7 @@ class Game {
             if($question->type == 'upload') {
                 $upload = Upload::where('table_id', $question->id)->where('table_name', 'questions')->first(); //This is not very effiecent, I should look into making this a single call later
                 if(!empty($upload->id)) {
-                    $insertData['questions'][$key]['file_url'] = $upload->file_url;
+                    $insertData['questions'][$key]['answer_2'] = $upload->file_url;
                 }
             }
         }
