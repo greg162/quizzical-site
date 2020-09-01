@@ -24,16 +24,14 @@ class QuizController extends Controller
         //
         $user        = Auth::user();
         $quizzes     = Quiz::where('user_id', $user->id)->paginate(10);
-        $quizIds     = $quizzes->pluck('id');
         $mongoFilter = [];
-        foreach($quizIds as $quizId) {
-            $mongoFilter['$or'][] = ['quiz_id' => $quizId];
-        }
         $mongoFilter['game_start_time'] = null;
+        foreach($quizzes as $quiz) {
+            $mongoFilter['quiz_id'] = $quiz->id;
+            $quiz->games = Game::list($mongoFilter);
+        }
 
-        $games = Game::list($mongoFilter);
-
-        return view('quizzes.list', ['quizzes' => $quizzes, 'games' => $games]);
+        return view('quizzes.list', ['quizzes' => $quizzes]);
     }
 
     /**
