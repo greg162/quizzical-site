@@ -1,7 +1,9 @@
-axios       = require('axios');
-general     = require('./general-library');
-window.Vue  = require('vue');
-Dropzone    = require('dropzone');
+//axios       = require('axios');
+import general     from './general-library';
+import Vue  from 'vue';
+import axios from 'axios';
+import draggable from 'vuedraggable';
+
 
 /**
  * The following block of code may be used to automatically register your
@@ -63,7 +65,7 @@ const app = new Vue({
                 if(!this.password) { errors += "You must enter a quiz password\r\n"; }
             }
             this.questions.forEach( (question, key) => {
-                questionNum = key + 1;
+                var questionNum = key + 1;
                 if(!question.question)     { errors  += `You must enter a question for ${questionNum}. \n`; }
                 if(!question.questionType) { errors  += `You must select a question type for question ${questionNum}\n`; }
                 else {
@@ -143,6 +145,8 @@ const app = new Vue({
         if(quizId) {
             this.loadQuiz(quizId);
         }
-    
-      }
+    },
+    components: {
+        draggable,
+    },
 });

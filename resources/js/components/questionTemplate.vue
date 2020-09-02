@@ -63,6 +63,7 @@
 </template>
 
 <script>
+    import Dropzone    from 'dropzone';
     export default {
         mounted() {
             if(this.question.questionType == 'upload') {

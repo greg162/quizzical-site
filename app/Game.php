@@ -50,7 +50,7 @@ class Game {
             //'current_question'  => [],
 
         ];
-        $questions  = Question::where('quiz_id', $quiz->id)->get();
+        $questions  = Question::where('quiz_id', $quiz->id)->orderBy('order', 'asc')->get();
         foreach($questions as $key => $question) {
             $insertData['questions'][$key] = $question->toArray();
             if($question->type == 'upload') {
