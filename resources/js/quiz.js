@@ -129,7 +129,6 @@ const app = new Vue({
         loadQuiz: function (quizId) {
             axios.post('/quiz/api-show/'+quizId)
             .then(function (response) {
-                console.log(response.data.questions);
                 this.title       = response.data.quiz.name;
                 this.description = response.data.quiz.description;
                 this.id          = response.data.quiz.id;

@@ -233,6 +233,8 @@ class QuizController extends Controller
                     if(empty($question->id)) {
                         $question->quiz_id = $quiz->id;
                         $question->user_id = $user->id;
+                        $question->uuid    = Str::uuid();
+
                     }
                     $question->cleanQuestionData();
                     $question->save();

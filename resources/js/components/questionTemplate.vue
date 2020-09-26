@@ -13,7 +13,8 @@
                         <option value="multiple-choice" >Mulitple Choice</option>
                         <option value="text" >One Answer</option>
                         <option value="embed" >Embed Something</option>
-                    <option value="upload" >Upload Something</option>
+                        <option value="upload" >Upload Something</option>
+                        <option value="divider" >Round Divider</option>
                     </select>
                     <div class="input-group-append">
                         <button v-on:click="removeThisQuestion(index);" class="btn btn-warning" >
@@ -33,6 +34,9 @@
                 <div v-show="question.questionType == 'upload' ">
                     <div v-bind:id="'upload'+question.id" class="dropzone"></div>
                     <textarea class="form-control m-2" v-model="question.answer_1" type="text" placeholder="Answer (leave blank if you want)"></textarea>
+                </div>
+                <div v-show="question.questionType == 'divider' ">
+                    <p>The text you enter as a question above will appear as a Divider</p>
                 </div>
                 <div v-show="question.questionType == 'multiple-choice' ">
                     <div class="input-group m-2">
@@ -73,14 +77,13 @@
                 this.createDropZone();
             }
         },
-        props: ['question', 'index', 'removeQuestion'],
+        props: [ 'quizId', 'question', 'index', 'removeQuestion'],
         methods: {
             removeThisQuestion: function(index) {
                 this.$parent.removeQuestion(index);
             },
             createDropZone() {
                 var currentFile  = null;
-                var quizId       = this.$parent.id;
                 var dropZoneParams = {};
                 if(typeof this.question.uuid != 'undefined' && this.question.uuid ) {
                     dropZoneParams.uuid = this.question.uuid;
