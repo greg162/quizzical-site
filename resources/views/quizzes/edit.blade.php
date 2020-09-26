@@ -27,7 +27,7 @@
                     <textarea class="form-control form-control m-2" v-model="description" placeholder="Short Description (if you want)" id="exampleFormControlTextarea1" rows="3"></textarea>
                 </div>
             </div>
-            <draggable v-model="questions" @start="drag=true" @end="drag=false">
+            <draggable v-model="questions" @start="drag=true" @end="drag=false" handle=".grabber" >
                 <question-component v-for="(question, index) in questions" v-bind:index="index"  :key="question.id" v-bind:question="question"></question-component>
             </draggable>
             <button class="btn btn-success mt-3" v-on:click="addQuestion();" >Add a Question</button>

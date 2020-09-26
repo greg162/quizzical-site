@@ -1,14 +1,19 @@
 <template>
     <div class="card mt-3">
-        <div class="card-body">
-            <div class="question">
+        <div class="card-body d-flex flex-row">
+            <div class="grabber d-flex" >
+                <div class="grabber-icon-container align-self-center" >
+                    <i class="fa fa-align fa-arrows-v fa-2x" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="question flex-fill">
                 <div class="input-group m-2">
                     <select class="form-control" v-on:change="questionTypeChanged()" v-model="question.questionType" >
                         <option value="" >Question Type</option>
                         <option value="multiple-choice" >Mulitple Choice</option>
                         <option value="text" >One Answer</option>
                         <option value="embed" >Embed Something</option>
-                        <option value="upload" >Upload Something</option>
+                    <option value="upload" >Upload Something</option>
                     </select>
                     <div class="input-group-append">
                         <button v-on:click="removeThisQuestion(index);" class="btn btn-warning" >
@@ -26,9 +31,7 @@
                     <textarea class="form-control m-2" v-model="question.answer_1" type="text" placeholder="Answer (leave blank if you want)"></textarea>
                 </div>
                 <div v-show="question.questionType == 'upload' ">
-                    <div v-bind:id="'upload'+question.id" class="dropzone">
-                        
-                    </div>
+                    <div v-bind:id="'upload'+question.id" class="dropzone"></div>
                     <textarea class="form-control m-2" v-model="question.answer_1" type="text" placeholder="Answer (leave blank if you want)"></textarea>
                 </div>
                 <div v-show="question.questionType == 'multiple-choice' ">
