@@ -28,7 +28,7 @@
                 </div>
             </div>
             <draggable v-model="questions" @start="drag=true" @end="drag=false" handle=".grabber" >
-                <question-component v-for="(question, index) in questions" v-bind:index="index"  :key="question.id" v-bind:quizId='id' v-bind:question="question"></question-component>
+                <question-component v-for="(question, index) in questions" v-bind:index="index"  :key="question.id" v-bind:quizId='id' @remove="removeQuestion" v-bind:question="question"></question-component>
             </draggable>
             <button class="btn btn-success mt-3" v-on:click="addQuestion();" >Add a Question</button>
             <button class="btn btn-success mt-3" v-on:click="updateQuiz();" >Update</button>

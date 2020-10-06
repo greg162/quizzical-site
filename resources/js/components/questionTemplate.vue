@@ -80,7 +80,7 @@
         props: [ 'quizId', 'question', 'index', 'removeQuestion'],
         methods: {
             removeThisQuestion: function(index) {
-                this.$parent.removeQuestion(index);
+                this.$emit('remove', index);
             },
             createDropZone() {
                 var currentFile  = null;
