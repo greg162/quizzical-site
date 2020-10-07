@@ -83,7 +83,7 @@
                 this.$emit('remove', index);
             },
             createDropZone() {
-                var currentFile  = null;
+                var currentFile    = null;
                 var dropZoneParams = {};
                 if(typeof this.question.uuid != 'undefined' && this.question.uuid ) {
                     dropZoneParams.uuid = this.question.uuid;
@@ -91,9 +91,12 @@
                 if(typeof this.question.id != 'undefined' && this.question.id ) {
                     dropZoneParams.question_id = this.question.id;
                 }
- 
-                var myDropzone   = new Dropzone('#upload'+this.question.id, {
-                    url: "/quiz/upload/"+quizId,
+
+                //Set the Quiz ID to zero if it's not a number (ie; one was not passed)
+                var urlQuizId  = (typeof quizId === 'number')? quizId : 0 ;
+                console.log(urlQuizId);
+                var myDropzone = new Dropzone('#upload'+this.question.id, {
+                    url: "/quiz/upload/"+urlQuizId,
                     maxFilesize: 5, // MB
                     maxFiles: 1,
                     acceptedFiles: 'image/*',
@@ -111,12 +114,11 @@
                     },
                     removedfile: function(file) {
                         file.previewElement.remove();
-                        
                         var updateObject = {};
                         if(dropZoneParams.uuid)        { updateObject.uuid = dropZoneParams.uuid; }
                         if(dropZoneParams.question_id) { updateObject.id   = dropZoneParams.question_id; }
                         
-                        axios.post('/quiz/remove-upload/'+quizId, updateObject)
+                        axios.post('/quiz/remove-upload/'+urlQuizId, updateObject)
                         .then(function (response) {
                         });
                         return false;

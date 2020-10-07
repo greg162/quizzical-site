@@ -20,7 +20,9 @@
                     <input class="form-control form-control-lg m-2" v-model="password" type="text" placeholder="Quiz Master Password">
                 </div>
             </div>
-            <question-component v-for="(question, index) in questions" v-bind:index="index" v-bind:question="question"></question-component>
+            <draggable v-model="questions" handle=".grabber" >
+                <question-component v-for="(question, index) in questions"  @remove="removeQuestion" v-bind:quizId="''" v-bind:question="question"></question-component>
+            </draggable>
             <button class="btn btn-success mt-3" v-on:click="addQuestion();" >Add a Question</button>
             <button class="btn btn-success mt-3" v-on:click="saveQuiz();" >Save Quiz</button>
         </div>
