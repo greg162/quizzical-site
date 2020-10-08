@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use HTMLPurifier, HTMLPurifier_Config;
-
+use App\User;
 class Question extends Model
 {
     //
@@ -16,7 +16,7 @@ class Question extends Model
         $questionNo   = The question number. If the question was the third in the list of questions, the number would be 3.
         $errors       = A string containing the errors associated with the question.
     */
-    static function validateQuestion($questionData, $questionNo) {
+    static function validateQuestion($questionData, $questionNo, User $user) {
         $errors = "";
 
         if(empty($questionData['question'])) { $errors .= "you must enter a question for question $questionNo\n"; }
@@ -40,9 +40,9 @@ class Question extends Model
             if(empty($questionData['answer_1']))       { $errors .= "You must enter some embed code for  #$questionNo\n"; }
             if(empty($questionData['correct_answer'])) { $errors .= "You must select a correct answer for question  #$questionNo\n"; }
         } elseif($questionData['questionType'] === 'upload') {
-            if( !empty($questionData['uuid']) && !Upload::where('uuid', $questionData['uuid'])->count() ) {
+            if( !empty($questionData['upload']['uuid']) && Upload::where('uuid', $questionData['upload']['uuid'])->where('user_id', $user->id)->count() <= 0 ) {
                 $errors .= "You must upload something for question #$questionNo\n"; 
-            } elseif(!empty($questionData['id']) && !Upload::where('table_id', $questionData['id'])->count()) {
+            } elseif(!empty($questionData['id']) && !Upload::where('table_id', $questionData['id'])->where('user_id', $user->id)->count()) {
                 $errors .= "You must upload something for question #$questionNo\n"; 
             } elseif(empty($questionData['id']) && empty($questionData['uuid'])) {
                 $errors .= "No upload ID was found!\n";

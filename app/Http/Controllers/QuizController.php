@@ -75,7 +75,7 @@ class QuizController extends Controller
 
                     //Carry out question validation
                     $questionNo = $key + 1;
-                    $errorMessage .= Question::validateQuestion($question, $questionNo);
+                    $errorMessage .= Question::validateQuestion($question, $questionNo, $user);
                 }
                 if($errorMessage) { return response()->json(['errors' => $errorMessage ],202); }
 
@@ -193,7 +193,7 @@ class QuizController extends Controller
 
                     //Carry out question validation
                     $questionNo = $key + 1;
-                    $errorMessage .= Question::validateQuestion($question, $questionNo);
+                    $errorMessage .= Question::validateQuestion($question, $questionNo, $user);
                 }
                 if($errorMessage) { return response()->json(['errors' => $errorMessage ],202); }
 
