@@ -9,6 +9,8 @@ use App\Question;
 use App\Game;
 use App\Upload;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
 // import the Intervention Image Manager Class
 
 
@@ -24,16 +26,14 @@ class QuizController extends Controller
         //
         $user        = Auth::user();
         $quizzes     = Quiz::where('user_id', $user->id)->paginate(10);
-        $quizIds     = $quizzes->pluck('id');
         $mongoFilter = [];
-        foreach($quizIds as $quizId) {
-            $mongoFilter['$or'][] = ['quiz_id' => $quizId];
-        }
         $mongoFilter['game_start_time'] = null;
+        foreach($quizzes as $quiz) {
+            $mongoFilter['quiz_id'] = $quiz->id;
+            $quiz->games = Game::list($mongoFilter);
+        }
 
-        $games = Game::list($mongoFilter);
-
-        return view('quizzes.list', ['quizzes' => $quizzes, 'games' => $games]);
+        return view('quizzes.list', ['quizzes' => $quizzes]);
     }
 
     /**
@@ -75,7 +75,7 @@ class QuizController extends Controller
 
                     //Carry out question validation
                     $questionNo = $key + 1;
-                    $errorMessage .= Question::validateQuestion($question, $questionNo);
+                    $errorMessage .= Question::validateQuestion($question, $questionNo, $user);
                 }
                 if($errorMessage) { return response()->json(['errors' => $errorMessage ],202); }
 
@@ -101,6 +101,8 @@ class QuizController extends Controller
                     $question->answer_6       = $requestQuestion['answer_6'] ?? '';
                     $question->type           = $requestQuestion['questionType'] ?? '';
                     $question->correct_answer = $requestQuestion['correct_answer'] ?? '';
+                    $question->uuid           = Str::uuid();
+                    $question->order          = intval($key) + 1;
                     $question->quiz_id = $quiz->id;
                     $question->user_id = $user->id;
                     $question->cleanQuestionData();
@@ -128,7 +130,7 @@ class QuizController extends Controller
         $user      = Auth::user();
         $quiz      = Quiz::where('id', $id)->where('user_id', $user->id)->first();
         if(!$quiz) { abort(404); }
-        $questions   = Question::where('quiz_id', $quiz->id)->get();
+        $questions   = Question::where('quiz_id', $quiz->id)->orderBy('order', 'asc')->get();
         //Get the linked uploads
         $questionIds = $permissionIDs = $questions->pluck('id'); 
         $uploads     = Upload::where('table_name', 'questions')->whereIn('table_id', $questionIds)->get();
@@ -191,7 +193,7 @@ class QuizController extends Controller
 
                     //Carry out question validation
                     $questionNo = $key + 1;
-                    $errorMessage .= Question::validateQuestion($question, $questionNo);
+                    $errorMessage .= Question::validateQuestion($question, $questionNo, $user);
                 }
                 if($errorMessage) { return response()->json(['errors' => $errorMessage ],202); }
 
@@ -225,11 +227,14 @@ class QuizController extends Controller
                     $question->answer_6       = $requestQuestion['answer_6'] ?? '';
                     $question->type           = $requestQuestion['questionType'] ?? '';
                     $question->correct_answer = $requestQuestion['correct_answer'] ?? '';
+                    $question->order          = $key + 1;
                     
                     //Step 3) If this is a new question add the quiz and user ID
                     if(empty($question->id)) {
                         $question->quiz_id = $quiz->id;
                         $question->user_id = $user->id;
+                        $question->uuid    = Str::uuid();
+
                     }
                     $question->cleanQuestionData();
                     $question->save();

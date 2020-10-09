@@ -1,7 +1,12 @@
 <template>
     <div class="card mt-3">
-        <div class="card-body">
-            <div class="question">
+        <div class="card-body d-flex flex-row">
+            <div class="grabber d-flex" >
+                <div class="grabber-icon-container align-self-center" >
+                    <i class="fa fa-align fa-arrows-v fa-2x" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="question flex-fill">
                 <div class="input-group m-2">
                     <select class="form-control" v-on:change="questionTypeChanged()" v-model="question.questionType" >
                         <option value="" >Question Type</option>
@@ -9,6 +14,7 @@
                         <option value="text" >One Answer</option>
                         <option value="embed" >Embed Something</option>
                         <option value="upload" >Upload Something</option>
+                        <option value="divider" >Round Divider</option>
                     </select>
                     <div class="input-group-append">
                         <button v-on:click="removeThisQuestion(index);" class="btn btn-warning" >
@@ -26,10 +32,11 @@
                     <textarea class="form-control m-2" v-model="question.answer_1" type="text" placeholder="Answer (leave blank if you want)"></textarea>
                 </div>
                 <div v-show="question.questionType == 'upload' ">
-                    <div v-bind:id="'upload'+question.id" class="dropzone">
-                        
-                    </div>
+                    <div v-bind:id="'upload'+question.id" class="dropzone"></div>
                     <textarea class="form-control m-2" v-model="question.answer_1" type="text" placeholder="Answer (leave blank if you want)"></textarea>
+                </div>
+                <div v-show="question.questionType == 'divider' ">
+                    <p>The text you enter as a question above will appear as a Divider</p>
                 </div>
                 <div v-show="question.questionType == 'multiple-choice' ">
                     <div class="input-group m-2">
@@ -63,20 +70,20 @@
 </template>
 
 <script>
+    import Dropzone    from 'dropzone';
     export default {
         mounted() {
             if(this.question.questionType == 'upload') {
                 this.createDropZone();
             }
         },
-        props: ['question', 'index', 'removeQuestion'],
+        props: [ 'quizId', 'question', 'index', 'removeQuestion'],
         methods: {
             removeThisQuestion: function(index) {
-                this.$parent.removeQuestion(index);
+                this.$emit('remove', index);
             },
             createDropZone() {
-                var currentFile  = null;
-                var quizId       = this.$parent.id;
+                var currentFile    = null;
                 var dropZoneParams = {};
                 if(typeof this.question.uuid != 'undefined' && this.question.uuid ) {
                     dropZoneParams.uuid = this.question.uuid;
@@ -84,9 +91,12 @@
                 if(typeof this.question.id != 'undefined' && this.question.id ) {
                     dropZoneParams.question_id = this.question.id;
                 }
- 
-                var myDropzone   = new Dropzone('#upload'+this.question.id, {
-                    url: "/quiz/upload/"+quizId,
+
+                //Set the Quiz ID to zero if it's not a number (ie; one was not passed)
+                var urlQuizId  = (typeof quizId === 'number')? quizId : 0 ;
+                console.log(urlQuizId);
+                var myDropzone = new Dropzone('#upload'+this.question.id, {
+                    url: "/quiz/upload/"+urlQuizId,
                     maxFilesize: 5, // MB
                     maxFiles: 1,
                     acceptedFiles: 'image/*',
@@ -104,12 +114,11 @@
                     },
                     removedfile: function(file) {
                         file.previewElement.remove();
-                        
                         var updateObject = {};
                         if(dropZoneParams.uuid)        { updateObject.uuid = dropZoneParams.uuid; }
                         if(dropZoneParams.question_id) { updateObject.id   = dropZoneParams.question_id; }
                         
-                        axios.post('/quiz/remove-upload/'+quizId, updateObject)
+                        axios.post('/quiz/remove-upload/'+urlQuizId, updateObject)
                         .then(function (response) {
                         });
                         return false;

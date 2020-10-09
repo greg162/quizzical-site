@@ -78,3 +78,21 @@ $font-brand: 'Titillium Web', sans-serif;
   font-weight: 700;
   cursor: pointer;
 }
+
+.grabber {
+  background-image: url('/img/grabber.png');
+  background-repeat: repeat;
+  width: 30px;
+  border-radius: 12px;
+  margin-right: 1.25rem;
+}
+
+.grabber-icon-container {
+  width: 100%;
+}
+
+.grabber-icon-container .fa {
+  width:100%;
+  text-align: center;
+  color: #8e8e8e;
+}

@@ -4,13 +4,19 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use HTMLPurifier, HTMLPurifier_Config;
-
+use App\User;
 class Question extends Model
 {
     //
     protected $fillable = ['type', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4', 'answer_5', 'answer_6', 'correct_answer'];
 
-    static function validateQuestion($questionData, $questionNo) {
+    /*
+        This function is used to check that a question is valid
+        $questionData = The raw json data from the request that contains the details of the question.
+        $questionNo   = The question number. If the question was the third in the list of questions, the number would be 3.
+        $errors       = A string containing the errors associated with the question.
+    */
+    static function validateQuestion($questionData, $questionNo, User $user) {
         $errors = "";
 
         if(empty($questionData['question'])) { $errors .= "you must enter a question for question $questionNo\n"; }
@@ -22,20 +28,21 @@ class Question extends Model
             'multiple-choice',
             'embed',
             'upload',
+            'divider',
         ])) { $errors .= "You have not selected a valid question type for question #$questionNo\n"; }
         elseif($questionData['questionType'] === 'multiple-choice') {
             if(empty($questionData['answer_1']))       { $errors .= "You must something into answer 1 for question  #$questionNo\n"; }
             if(empty($questionData['answer_2']))       { $errors .= "You must something into answer 2 for question  #$questionNo\n"; }
             if(empty($questionData['correct_answer'])) { $errors .= "You must select a correct answer for question  #$questionNo\n"; }
-        }elseif($questionData['questionType'] === 'text') {
-
+        }elseif($questionData['questionType'] === 'text') { //No extra validation is required for a text question
+        }elseif($questionData['questionType'] === 'divider') { // A Divider does not have a question type
         }elseif($questionData['questionType'] === 'embed') {
             if(empty($questionData['answer_1']))       { $errors .= "You must enter some embed code for  #$questionNo\n"; }
             if(empty($questionData['correct_answer'])) { $errors .= "You must select a correct answer for question  #$questionNo\n"; }
         } elseif($questionData['questionType'] === 'upload') {
-            if( !empty($questionData['uuid']) && !Upload::where('uuid', $questionData['uuid'])->count() ) {
+            if( !empty($questionData['upload']['uuid']) && Upload::where('uuid', $questionData['upload']['uuid'])->where('user_id', $user->id)->count() <= 0 ) {
                 $errors .= "You must upload something for question #$questionNo\n"; 
-            } elseif(!empty($questionData['id']) && !Upload::where('table_id', $questionData['id'])->count()) {
+            } elseif(!empty($questionData['id']) && !Upload::where('table_id', $questionData['id'])->where('user_id', $user->id)->count()) {
                 $errors .= "You must upload something for question #$questionNo\n"; 
             } elseif(empty($questionData['id']) && empty($questionData['uuid'])) {
                 $errors .= "No upload ID was found!\n";
@@ -47,6 +54,9 @@ class Question extends Model
         return $errors;
     }
 
+    /*
+        This function uses the HTML purifier to ensure that an iframe entered by a user does not contain any malicious HTML. This is done by only allowing certain iframe sources and removing any unrequired tags.
+     */
     function cleanQuestionData() {
         $config = HTMLPurifier_Config::createDefault();
         //allow iframes from trusted sources

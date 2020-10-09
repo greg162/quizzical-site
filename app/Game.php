@@ -6,8 +6,6 @@ use App\base\Mongo;
 use Illuminate\Support\Str;
 use App\Upload;
 
-
-
 class Game {
 
 
@@ -18,9 +16,12 @@ class Game {
         return $games;
     }
 
-    static function list( array $searchArray, int $limit = 100) {
+    static function list( array $searchArray, int $limit = 5) {
         $mongo = new Mongo('db', 'games');
-        $games = $mongo->connection->find($searchArray, [ 'limit' => $limit ]);
+        $games = $mongo->connection->find($searchArray, [ 
+            'limit' => $limit,
+            'sort' => ['created_date' => -1],
+        ]);
         $games = iterator_to_array($games);
         $games = Game::addGameUrlsToGames($games);
         return $games;
@@ -29,7 +30,9 @@ class Game {
     static function create($user, $quiz) {
 
         $mongo = new Mongo('db', 'games');
+        $date =  new \MongoDB\BSON\UTCDateTime(time() * 1000 );
         $insertData = [
+            'created_date'      => $date,
             'uuid'              => Str::uuid(),
             'game_id'           => Str::random(10),
             'user_id'           => $user->id,
@@ -47,7 +50,7 @@ class Game {
             //'current_question'  => [],
 
         ];
-        $questions  = Question::where('quiz_id', $quiz->id)->get();
+        $questions  = Question::where('quiz_id', $quiz->id)->orderBy('order', 'asc')->get();
         foreach($questions as $key => $question) {
             $insertData['questions'][$key] = $question->toArray();
             if($question->type == 'upload') {
