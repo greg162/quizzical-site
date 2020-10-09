@@ -35,7 +35,7 @@ class Upload extends Model
 
         $tempFilePath = storage_path().'/app/'.$request->file->storeAs('temp_question_images', $fileName, 'local');
         // create an image manager instance with favored driver
-        $manager = new ImageManager(array('driver' => 'GD'));
+        $manager = new ImageManager(array('driver' => 'gd'));
         $image   = $manager->make($tempFilePath);
         $w = $image->width();
         $h = $image->height();
