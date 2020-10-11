@@ -70,7 +70,8 @@
 </template>
 
 <script>
-    import Dropzone    from 'dropzone';
+    import Dropzone from 'dropzone';
+    import axios from 'axios';
     export default {
         mounted() {
             if(this.question.questionType == 'upload') {
@@ -126,10 +127,9 @@
                 });
 
                 if(this.question.id && this.question.upload ) {
-                    var mockFile = { name: 'Your Question Image', size: this.question.upload.file_size };
-
-                    let callback = null; // Optional callback when it's done
-                    let crossOrigin = false; // Added to the `img` tag for crossOrigin handling
+                    var mockFile        = { name: 'Your Question Image', size: this.question.upload.file_size };
+                    let callback        = null; // Optional callback when it's done
+                    let crossOrigin     = false; // Added to the `img` tag for crossOrigin handling
                     let resizeThumbnail = true; // Tells Dropzone whether it should resize the image first
                     myDropzone.displayExistingFile(mockFile, this.question.upload.file_url, callback, crossOrigin, resizeThumbnail);
 

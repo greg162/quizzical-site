@@ -363,10 +363,11 @@ class QuizController extends Controller
             return response()->json(['errors' => $errorMessage ],202);
         } else {
             //
-            if(!empty($request->uuid)) {
-                $upload = Upload::where('user_id', $user->id)->where('uuid', $request->uuid)->first();
-            } elseif(!empty($request->id)) {
+
+            if(!empty($request->id)) {
                 $upload = Upload::where('user_id', $user->id)->where('table_id', (integer) $request->id)->first();
+            } elseif(!empty($request->uuid)) {
+                    $upload = Upload::where('user_id', $user->id)->where('uuid', $request->uuid)->first();
             } else {
                 return response()->json(['errors' => 'UUID/ID not found' ],202);
             }
